@@ -30,7 +30,7 @@ export interface GenerateReportResult {
 /**
  * Server Action pour générer un rapport PDF
  * Note: Le PNG est généré côté client avec html2canvas pour éviter les dépendances natives
- * 
+ *
  * @param input - Données pour la génération du rapport
  * @returns Résultat avec les données binaires en base64 ou une erreur
  */
@@ -58,7 +58,8 @@ export async function actionGenerateReport(
     if (input.format !== "pdf") {
       return {
         success: false,
-        error: "Format non supporté côté serveur. Utilisez la génération client-side pour PNG.",
+        error:
+          "Format non supporté côté serveur. Utilisez la génération client-side pour PNG.",
       };
     }
 
@@ -131,6 +132,19 @@ export async function actionGenerateReport(
       minute: "2-digit",
     });
 
+    // Fonction de formatage des nombres avec espace comme séparateur de milliers
+    const formatNumber = (value: number): string => {
+      const parts = value.toFixed(2).split(".");
+      const integerPart = parts[0];
+      const decimalPart = parts[1];
+      // Ajouter des espaces tous les 3 chiffres en partant de la droite
+      const formattedInteger = integerPart.replace(
+        /\B(?=(\d{3})+(?!\d))/g,
+        " "
+      );
+      return `${formattedInteger},${decimalPart}`;
+    };
+
     // Créer le document PDF
     const doc = (
       <Document>
@@ -143,29 +157,17 @@ export async function actionGenerateReport(
           <View style={styles.metricsContainer}>
             <View style={styles.metricBox}>
               <Text style={styles.metricLabel}>Taux de Fréquence (TF)</Text>
-              <Text style={styles.metricValue}>
-                {input.tf.toLocaleString("fr-FR", {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </Text>
+              <Text style={styles.metricValue}>{formatNumber(input.tf)}</Text>
             </View>
 
             <View style={styles.metricBox}>
               <Text style={styles.metricLabel}>Taux de Gravité (TG)</Text>
-              <Text style={styles.metricValue}>
-                {input.tg.toLocaleString("fr-FR", {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </Text>
+              <Text style={styles.metricValue}>{formatNumber(input.tg)}</Text>
             </View>
           </View>
 
           <View style={styles.footer}>
-            <Text>
-              Coefficient : {COEFFICIENT_LABELS[input.coefficient]}
-            </Text>
+            <Text>Coefficient : {COEFFICIENT_LABELS[input.coefficient]}</Text>
             <Text>Généré le {timestamp}</Text>
           </View>
         </Page>

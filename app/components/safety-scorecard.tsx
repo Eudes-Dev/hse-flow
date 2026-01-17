@@ -1,4 +1,7 @@
-import { type CoefficientStandard, COEFFICIENT_LABELS } from "@/app/lib/coefficients";
+import {
+  type CoefficientStandard,
+  COEFFICIENT_LABELS,
+} from "@/app/lib/coefficients";
 
 interface SafetyScorecardProps {
   tf: number;
@@ -25,6 +28,16 @@ export default function SafetyScorecard({
     minute: "2-digit",
   });
 
+  // Fonction de formatage des nombres avec espace comme séparateur de milliers
+  const formatNumber = (value: number): string => {
+    const parts = value.toFixed(2).split(".");
+    const integerPart = parts[0];
+    const decimalPart = parts[1];
+    // Ajouter des espaces tous les 3 chiffres en partant de la droite
+    const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    return `${formattedInteger},${decimalPart}`;
+  };
+
   return (
     <div
       className="bg-deep-black text-white flex flex-col items-center justify-center p-8"
@@ -36,10 +49,7 @@ export default function SafetyScorecard({
     >
       {/* En-tête : Branding HSE-Flow */}
       <div className="mb-12 text-center">
-        <h1
-          className="text-5xl font-bold mb-2"
-          style={{ color: "#C9A227" }}
-        >
+        <h1 className="text-5xl font-bold mb-2" style={{ color: "#C9A227" }}>
           HSE-Flow
         </h1>
         <p className="text-lg" style={{ color: "#F4F4F4" }}>
@@ -50,43 +60,47 @@ export default function SafetyScorecard({
       {/* Corps : TF et TG */}
       <div className="flex flex-col gap-8 w-full max-w-2xl mb-12">
         {/* Taux de Fréquence (TF) */}
-        <div className="bg-deep-black border-2 p-8 rounded-lg" style={{ borderColor: "#C9A227" }}>
-          <h2 className="text-2xl font-medium mb-4" style={{ color: "#F4F4F4" }}>
+        <div
+          className="bg-deep-black border-2 p-8 rounded-lg"
+          style={{ borderColor: "#C9A227" }}
+        >
+          <h2
+            className="text-2xl font-medium mb-4"
+            style={{ color: "#F4F4F4" }}
+          >
             Taux de Fréquence (TF)
           </h2>
           <div
             className="text-7xl font-bold tabular-nums"
             style={{ color: "#C9A227" }}
           >
-            {tf.toLocaleString("fr-FR", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}
+            {formatNumber(tf)}
           </div>
         </div>
 
         {/* Taux de Gravité (TG) */}
-        <div className="bg-deep-black border-2 p-8 rounded-lg" style={{ borderColor: "#C9A227" }}>
-          <h2 className="text-2xl font-medium mb-4" style={{ color: "#F4F4F4" }}>
+        <div
+          className="bg-deep-black border-2 p-8 rounded-lg"
+          style={{ borderColor: "#C9A227" }}
+        >
+          <h2
+            className="text-2xl font-medium mb-4"
+            style={{ color: "#F4F4F4" }}
+          >
             Taux de Gravité (TG)
           </h2>
           <div
             className="text-7xl font-bold tabular-nums"
             style={{ color: "#C9A227" }}
           >
-            {tg.toLocaleString("fr-FR", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}
+            {formatNumber(tg)}
           </div>
         </div>
       </div>
 
       {/* Pied : Coefficient et Date */}
       <div className="text-center text-sm" style={{ color: "#F4F4F4" }}>
-        <p className="mb-2">
-          Coefficient : {COEFFICIENT_LABELS[coefficient]}
-        </p>
+        <p className="mb-2">Coefficient : {COEFFICIENT_LABELS[coefficient]}</p>
         <p>Généré le {formattedDate}</p>
       </div>
     </div>
