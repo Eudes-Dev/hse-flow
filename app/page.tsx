@@ -167,7 +167,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen p-4 md:p-8 bg-ui-gray">
-      <div className="max-w-2xl mx-auto space-y-8">
+      <div className="max-w-2xl mx-auto space-y-8 mb-24">
         <header className="text-center space-y-2">
           <h1 className="text-4xl md:text-5xl font-bold text-deep-black">
             HSE-Flow
