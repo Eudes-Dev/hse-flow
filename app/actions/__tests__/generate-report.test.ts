@@ -20,17 +20,13 @@ jest.mock("@react-pdf/renderer", () => {
 
 // Mock coefficients
 jest.mock("@/app/lib/coefficients", () => ({
-  COEFFICIENT_LABELS: {
-    european: "Standard Européen (1,000,000)",
-    osha: "OSHA (200,000)",
-  },
+  COEFFICIENT_LABEL: "Standard Européen (1,000,000)",
 }));
 
 describe("actionGenerateReport", () => {
   const validInput = {
     tf: 5.25,
     tg: 12.5,
-    coefficient: "european" as const,
     format: "pdf" as const,
   };
 
@@ -42,7 +38,6 @@ describe("actionGenerateReport", () => {
     const result = await actionGenerateReport({
       tf: -1,
       tg: 10,
-      coefficient: "european",
       format: "pdf",
     });
 
@@ -86,7 +81,6 @@ describe("actionGenerateReport", () => {
     const result = await actionGenerateReport({
       tf: 5.25,
       tg: 0,
-      coefficient: "european",
       format: "pdf",
     });
 

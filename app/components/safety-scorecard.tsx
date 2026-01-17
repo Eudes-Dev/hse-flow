@@ -1,12 +1,8 @@
-import {
-  type CoefficientStandard,
-  COEFFICIENT_LABELS,
-} from "@/app/lib/coefficients";
+import { COEFFICIENT_LABEL } from "@/app/lib/coefficients";
 
 interface SafetyScorecardProps {
   tf: number;
   tg: number;
-  coefficient: CoefficientStandard;
   timestamp?: Date;
 }
 
@@ -17,7 +13,6 @@ interface SafetyScorecardProps {
 export default function SafetyScorecard({
   tf,
   tg,
-  coefficient,
   timestamp = new Date(),
 }: SafetyScorecardProps) {
   const formattedDate = timestamp.toLocaleString("fr-FR", {
@@ -100,7 +95,7 @@ export default function SafetyScorecard({
 
       {/* Pied : Coefficient et Date */}
       <div className="text-center text-sm" style={{ color: "#F4F4F4" }}>
-        <p className="mb-2">Coefficient : {COEFFICIENT_LABELS[coefficient]}</p>
+        <p className="mb-2">Coefficient : {COEFFICIENT_LABEL}</p>
         <p>Généré le {formattedDate}</p>
       </div>
     </div>

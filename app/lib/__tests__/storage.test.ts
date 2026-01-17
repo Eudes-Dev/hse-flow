@@ -4,7 +4,6 @@ import {
   clearMetricsStorage,
 } from "../storage";
 import type { MetricsFormData } from "@/app/components/metrics-form";
-import { DEFAULT_COEFFICIENT_STANDARD } from "../coefficients";
 
 describe("LocalStorage", () => {
   beforeEach(() => {
@@ -23,7 +22,6 @@ describe("LocalStorage", () => {
         hoursWorked: "1000000",
         accidentsCount: "5",
         daysLost: "10",
-        coefficient: "european",
       };
 
       saveMetricsToStorage(data);
@@ -41,13 +39,11 @@ describe("LocalStorage", () => {
         hoursWorked: "1000000",
         accidentsCount: "5",
         daysLost: "10",
-        coefficient: "european",
       };
       const data2: MetricsFormData = {
         hoursWorked: "2000000",
         accidentsCount: "10",
         daysLost: "20",
-        coefficient: "european",
       };
 
       saveMetricsToStorage(data1);
@@ -68,7 +64,6 @@ describe("LocalStorage", () => {
         hoursWorked: "1000000",
         accidentsCount: "5",
         daysLost: "10",
-        coefficient: "european",
       };
 
       expect(() => saveMetricsToStorage(data)).not.toThrow();
@@ -83,7 +78,6 @@ describe("LocalStorage", () => {
         hoursWorked: "1000000",
         accidentsCount: "5",
         daysLost: "10",
-        coefficient: "european",
       };
 
       localStorage.setItem("hse-flow-metrics", JSON.stringify(data));
@@ -134,7 +128,6 @@ describe("LocalStorage", () => {
         hoursWorked: "1000000",
         accidentsCount: "5",
         daysLost: "10",
-        coefficient: "european",
       };
 
       saveMetricsToStorage(data);
@@ -166,7 +159,6 @@ describe("LocalStorage", () => {
         hoursWorked: "1000000",
         accidentsCount: "5",
         daysLost: "10",
-        coefficient: "european",
       };
 
       // Sauvegarde
@@ -178,7 +170,6 @@ describe("LocalStorage", () => {
         hoursWorked: "2000000",
         accidentsCount: "10",
         daysLost: "20",
-        coefficient: "osha",
       };
       saveMetricsToStorage(modifiedData);
       expect(loadMetricsFromStorage()).toEqual(modifiedData);
@@ -189,54 +180,24 @@ describe("LocalStorage", () => {
     });
   });
 
-  describe("Migration du coefficient", () => {
-    it("devrait utiliser 'european' par défaut si le coefficient est absent", () => {
-      // Données anciennes sans coefficient (story 1.1)
+  describe("Migration des données anciennes", () => {
+    it("devrait ignorer le coefficient s'il existe dans les données anciennes", () => {
+      // Données anciennes avec coefficient (sera ignoré)
       const oldData = {
         hoursWorked: "1000000",
         accidentsCount: "5",
         daysLost: "10",
+        coefficient: "osha", // Sera ignoré
       };
       localStorage.setItem("hse-flow-metrics", JSON.stringify(oldData));
 
       const loaded = loadMetricsFromStorage();
       expect(loaded).not.toBeNull();
       if (loaded) {
-        expect(loaded.coefficient).toBe(DEFAULT_COEFFICIENT_STANDARD);
+        // Le coefficient est ignoré, seules les données principales sont retournées
         expect(loaded.hoursWorked).toBe("1000000");
         expect(loaded.accidentsCount).toBe("5");
         expect(loaded.daysLost).toBe("10");
-      }
-    });
-
-    it("devrait sauvegarder et restaurer le coefficient", () => {
-      const data: MetricsFormData = {
-        hoursWorked: "1000000",
-        accidentsCount: "5",
-        daysLost: "10",
-        coefficient: "osha",
-      };
-
-      saveMetricsToStorage(data);
-      const loaded = loadMetricsFromStorage();
-      expect(loaded).toEqual(data);
-      expect(loaded?.coefficient).toBe("osha");
-    });
-
-    it("devrait restaurer 'european' si le coefficient sauvegardé est invalide", () => {
-      // Données avec coefficient invalide
-      const invalidData = {
-        hoursWorked: "1000000",
-        accidentsCount: "5",
-        daysLost: "10",
-        coefficient: "invalid",
-      };
-      localStorage.setItem("hse-flow-metrics", JSON.stringify(invalidData));
-
-      const loaded = loadMetricsFromStorage();
-      expect(loaded).not.toBeNull();
-      if (loaded) {
-        expect(loaded.coefficient).toBe(DEFAULT_COEFFICIENT_STANDARD);
       }
     });
   });

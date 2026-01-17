@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { type CoefficientStandard } from "@/app/lib/coefficients";
 import { actionGenerateReport } from "@/app/actions/generate-report";
 import SafetyScorecard from "./safety-scorecard";
 import html2canvas from "html2canvas";
@@ -10,7 +9,6 @@ import jsPDF from "jspdf";
 interface ExportButtonProps {
   tf: number | null;
   tg: number | null;
-  coefficient: CoefficientStandard;
 }
 
 /**
@@ -21,7 +19,6 @@ interface ExportButtonProps {
 export default function ExportButton({
   tf,
   tg,
-  coefficient,
 }: ExportButtonProps) {
   const [isExporting, setIsExporting] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -58,7 +55,6 @@ export default function ExportButton({
         React.createElement(SafetyScorecard, {
           tf: tf!,
           tg: tg!,
-          coefficient,
           timestamp: new Date(),
         })
       );
@@ -114,7 +110,6 @@ export default function ExportButton({
         const result = await actionGenerateReport({
           tf: tf!,
           tg: tg!,
-          coefficient,
           format: "pdf",
         });
 
@@ -164,7 +159,6 @@ export default function ExportButton({
         React.createElement(SafetyScorecard, {
           tf: tf!,
           tg: tg!,
-          coefficient,
           timestamp: new Date(),
         })
       );

@@ -1,22 +1,16 @@
 "use client";
 
 import { ChangeEvent } from "react";
-import CoefficientSelector from "./coefficient-selector";
-import type { CoefficientStandard } from "@/app/lib/coefficients";
 
 export interface MetricsFormData {
   hoursWorked: string;
   accidentsCount: string;
   daysLost: string;
-  coefficient?: CoefficientStandard;
 }
 
 interface MetricsFormProps {
   values: MetricsFormData;
-  onChange: (
-    field: keyof MetricsFormData,
-    value: string | CoefficientStandard
-  ) => void;
+  onChange: (field: keyof MetricsFormData, value: string) => void;
   errors?: {
     hoursWorked?: string;
     accidentsCount?: string;
@@ -44,16 +38,8 @@ export default function MetricsForm({
     placeholder:text-deep-black/40
   `;
 
-  const handleCoefficientChange = (standard: CoefficientStandard) => {
-    onChange("coefficient", standard);
-  };
-
   return (
     <div className="space-y-6">
-      <CoefficientSelector
-        value={values.coefficient || "european"}
-        onChange={handleCoefficientChange}
-      />
       <div>
         <label
           htmlFor="hours-worked"

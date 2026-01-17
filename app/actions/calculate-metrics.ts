@@ -2,19 +2,11 @@
 
 import { metricsInputSchema } from "@/app/lib/validation";
 import { calculateTF, calculateTG } from "@/app/lib/calculations";
-import {
-  DEFAULT_COEFFICIENT_STANDARD,
-  getCoefficientValue,
-  type CoefficientStandard,
-} from "@/app/lib/coefficients";
-
-const DEFAULT_COEFFICIENT = 1_000_000; // Standard Européen (pour compatibilité)
 
 export interface CalculateMetricsInput {
   hoursWorked: number;
   accidentsCount: number;
   daysLost: number;
-  coefficient?: CoefficientStandard;
 }
 
 export interface CalculateMetricsResult {
@@ -45,14 +37,9 @@ export async function actionCalculateMetrics(
 
     const { hoursWorked, accidentsCount, daysLost } = validationResult.data;
 
-    // Déterminer le coefficient à utiliser
-    const coefficientStandard =
-      input.coefficient || DEFAULT_COEFFICIENT_STANDARD;
-    const coefficient = getCoefficientValue(coefficientStandard);
-
-    // Calcul des indicateurs
-    const tf = calculateTF(accidentsCount, hoursWorked, coefficient);
-    const tg = calculateTG(daysLost, hoursWorked, coefficient);
+    // Calcul des indicateurs (Standard Européen fixe)
+    const tf = calculateTF(accidentsCount, hoursWorked);
+    const tg = calculateTG(daysLost, hoursWorked);
 
     return {
       success: true,

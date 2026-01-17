@@ -3,14 +3,12 @@
 import { useMotionValue, useSpring, useTransform, useMotionValueEvent } from "framer-motion";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { type CoefficientStandard } from "@/app/lib/coefficients";
 import ExportButton from "./export-button";
 
 interface MetricsResultsProps {
   tf: number | null;
   tg: number | null;
   error?: string;
-  coefficient?: CoefficientStandard;
 }
 
 function AnimatedNumber({ value }: { value: number }) {
@@ -49,7 +47,6 @@ export default function MetricsResults({
   tf,
   tg,
   error,
-  coefficient = "european",
 }: MetricsResultsProps) {
   if (error) {
     return (
@@ -86,7 +83,7 @@ export default function MetricsResults({
       {/* Bouton d'exportation */}
       {tf !== null && tg !== null && (
         <div className="flex justify-center pt-4">
-          <ExportButton tf={tf} tg={tg} coefficient={coefficient} />
+          <ExportButton tf={tf} tg={tg} />
         </div>
       )}
     </div>

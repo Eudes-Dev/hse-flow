@@ -1,7 +1,6 @@
 "use server";
 
 import { z } from "zod";
-import { type CoefficientStandard } from "@/app/lib/coefficients";
 
 /**
  * Schéma de validation pour les données d'export
@@ -9,13 +8,11 @@ import { type CoefficientStandard } from "@/app/lib/coefficients";
 const exportDataSchema = z.object({
   tf: z.number().finite().positive("TF doit être un nombre positif"),
   tg: z.number().finite().nonnegative("TG doit être un nombre positif ou zéro"),
-  coefficient: z.enum(["european", "osha"]),
 });
 
 export interface GenerateReportInput {
   tf: number;
   tg: number;
-  coefficient: CoefficientStandard;
   format: "pdf";
 }
 
@@ -42,7 +39,6 @@ export async function actionGenerateReport(
     const validationResult = exportDataSchema.safeParse({
       tf: input.tf,
       tg: input.tg,
-      coefficient: input.coefficient,
     });
 
     if (!validationResult.success) {
@@ -67,7 +63,7 @@ export async function actionGenerateReport(
     const { Document, Page, Text, View, StyleSheet, pdf } = await import(
       "@react-pdf/renderer"
     );
-    const { COEFFICIENT_LABELS } = await import("@/app/lib/coefficients");
+    const { COEFFICIENT_LABEL } = await import("@/app/lib/coefficients");
 
     const styles = StyleSheet.create({
       page: {
@@ -167,7 +163,7 @@ export async function actionGenerateReport(
           </View>
 
           <View style={styles.footer}>
-            <Text>Coefficient : {COEFFICIENT_LABELS[input.coefficient]}</Text>
+            <Text>Coefficient : {COEFFICIENT_LABEL}</Text>
             <Text>Généré le {timestamp}</Text>
           </View>
         </Page>

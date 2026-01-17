@@ -7,16 +7,10 @@ import InstallPwaBanner from "./components/install-pwa-banner";
 import { calculateMetrics } from "./lib/calculations";
 import { saveMetricsToStorage, loadMetricsFromStorage } from "./lib/storage";
 import { actionCalculateMetrics } from "./actions/calculate-metrics";
-import {
-  DEFAULT_COEFFICIENT_STANDARD,
-  type CoefficientStandard,
-} from "./lib/coefficients";
-
 const DEFAULT_FORM_DATA: MetricsFormData = {
   hoursWorked: "",
   accidentsCount: "",
   daysLost: "",
-  coefficient: DEFAULT_COEFFICIENT_STANDARD,
 };
 
 export default function Home() {
@@ -57,18 +51,15 @@ export default function Home() {
       const hoursWorked = Number(data.hoursWorked);
       const accidentsCount = Number(data.accidentsCount || 0);
       const daysLost = Number(data.daysLost || 0);
-      const coefficient: CoefficientStandard =
-        data.coefficient || DEFAULT_COEFFICIENT_STANDARD;
 
       let result;
 
       try {
-        // Appel du Server Action
+        // Appel du Server Action (Standard Européen fixe)
         const serverResult = await actionCalculateMetrics({
           hoursWorked,
           accidentsCount,
           daysLost,
-          coefficient,
         });
 
         if (
@@ -124,25 +115,11 @@ export default function Home() {
     return () => clearTimeout(timeoutId);
   }, [formData, performCalculation]);
 
-  const handleFieldChange = (
-    field: keyof MetricsFormData,
-    value: string | CoefficientStandard
-  ) => {
-    // Si c'est le coefficient, mettre à jour directement
-    if (field === "coefficient") {
-      setFormData((prev) => ({
-        ...prev,
-        coefficient: value as CoefficientStandard,
-      }));
-      return;
-    }
-
+  const handleFieldChange = (field: keyof MetricsFormData, value: string) => {
     // Validation basique : empêcher les valeurs négatives pour les champs numériques
-    if (typeof value === "string") {
-      const numValue = Number(value);
-      if (value !== "" && (isNaN(numValue) || numValue < 0)) {
-        return; // Ignorer la saisie invalide
-      }
+    const numValue = Number(value);
+    if (value !== "" && (isNaN(numValue) || numValue < 0)) {
+      return; // Ignorer la saisie invalide
     }
 
     setFormData((prev) => ({
@@ -198,12 +175,7 @@ export default function Home() {
               Calcul en cours...
             </p>
           )}
-          <MetricsResults
-            tf={tf}
-            tg={tg}
-            error={error}
-            coefficient={formData.coefficient}
-          />
+          <MetricsResults tf={tf} tg={tg} error={error} />
         </div>
       </div>
 

@@ -1,11 +1,4 @@
 import { metricsInputSchema, type MetricsInput } from "./validation";
-import {
-  DEFAULT_COEFFICIENT_STANDARD,
-  getCoefficientValue,
-  type CoefficientStandard,
-} from "./coefficients";
-
-const DEFAULT_COEFFICIENT = 1_000_000; // Standard Européen (pour compatibilité)
 
 export interface CalculationResult {
   tf: number | null;
@@ -16,11 +9,11 @@ export interface CalculationResult {
 /**
  * Calcule le Taux de Fréquence (TF)
  * TF = (Nombre d'accidents avec arrêt / Heures travaillées) × 1 000 000
+ * Standard Européen (fixe)
  */
 export function calculateTF(
   accidentsCount: number,
-  hoursWorked: number,
-  coefficient: number = DEFAULT_COEFFICIENT
+  hoursWorked: number
 ): number {
   if (hoursWorked === 0) {
     throw new Error(
@@ -28,7 +21,7 @@ export function calculateTF(
     );
   }
 
-  // TF utilise toujours 1 000 000 comme coefficient
+  // TF utilise toujours 1 000 000 comme coefficient (Standard Européen)
   const tfCoefficient = 1_000_000;
   const result = (accidentsCount / hoursWorked) * tfCoefficient;
 
@@ -43,11 +36,11 @@ export function calculateTF(
 /**
  * Calcule le Taux de Gravité (TG)
  * TG = (Nombre de jours perdus / Heures travaillées) × 1 000
+ * Standard Européen (fixe)
  */
 export function calculateTG(
   daysLost: number,
-  hoursWorked: number,
-  coefficient: number = DEFAULT_COEFFICIENT
+  hoursWorked: number
 ): number {
   if (hoursWorked === 0) {
     throw new Error(
@@ -55,7 +48,7 @@ export function calculateTG(
     );
   }
 
-  // TG utilise toujours 1 000 comme coefficient
+  // TG utilise toujours 1 000 comme coefficient (Standard Européen)
   const tgCoefficient = 1_000;
   const result = (daysLost / hoursWorked) * tgCoefficient;
 
@@ -69,13 +62,13 @@ export function calculateTG(
 
 /**
  * Calcule les deux indicateurs TF et TG avec validation
+ * Utilise toujours le Standard Européen (fixe)
  */
 export function calculateMetrics(
   input: Partial<{
     hoursWorked: string | number;
     accidentsCount: string | number;
     daysLost: string | number;
-    coefficient?: CoefficientStandard;
   }>
 ): CalculationResult {
   // Validation : si un champ requis est vide, ne pas calculer
@@ -112,13 +105,9 @@ export function calculateMetrics(
   }
 
   try {
-    // Déterminer le coefficient à utiliser
-    const coefficientStandard =
-      input.coefficient || DEFAULT_COEFFICIENT_STANDARD;
-    const coefficient = getCoefficientValue(coefficientStandard);
-
-    const tf = calculateTF(accidentsCount, hoursWorked, coefficient);
-    const tg = calculateTG(daysLost, hoursWorked, coefficient);
+    // Utilise toujours le Standard Européen (fixe)
+    const tf = calculateTF(accidentsCount, hoursWorked);
+    const tg = calculateTG(daysLost, hoursWorked);
 
     return {
       tf,

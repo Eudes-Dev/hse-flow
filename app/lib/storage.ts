@@ -1,5 +1,4 @@
 import type { MetricsFormData } from "@/app/components/metrics-form";
-import { DEFAULT_COEFFICIENT_STANDARD, type CoefficientStandard } from "./coefficients";
 
 const STORAGE_KEY = "hse-flow-metrics";
 
@@ -18,7 +17,7 @@ export function saveMetricsToStorage(data: MetricsFormData): void {
 
 /**
  * Récupère les données de formulaire depuis LocalStorage
- * Gère la migration des données existantes (si coefficient absent, utilise "european" par défaut)
+ * Gère la migration des données existantes (ignore le coefficient s'il existe)
  */
 export function loadMetricsFromStorage(): MetricsFormData | null {
   try {
@@ -26,24 +25,18 @@ export function loadMetricsFromStorage(): MetricsFormData | null {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (!stored) return null;
 
-    const data = JSON.parse(stored) as Partial<MetricsFormData>;
+    const data = JSON.parse(stored) as Partial<MetricsFormData & { coefficient?: unknown }>;
     // Validation basique des données
     if (
       typeof data.hoursWorked === "string" &&
       typeof data.accidentsCount === "string" &&
       typeof data.daysLost === "string"
     ) {
-      // Migration : si coefficient absent, utiliser "european" par défaut
-      const coefficient: CoefficientStandard =
-        data.coefficient && (data.coefficient === "european" || data.coefficient === "osha")
-          ? data.coefficient
-          : DEFAULT_COEFFICIENT_STANDARD;
-
+      // Migration : ignorer le coefficient s'il existe (Standard Européen fixe)
       return {
         hoursWorked: data.hoursWorked,
         accidentsCount: data.accidentsCount,
         daysLost: data.daysLost,
-        coefficient,
       };
     }
     return null;

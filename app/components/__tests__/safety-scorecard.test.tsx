@@ -5,7 +5,6 @@ describe("SafetyScorecard", () => {
   const defaultProps = {
     tf: 5.25,
     tg: 12.5,
-    coefficient: "european" as const,
   };
 
   it("renders with correct TF and TG values", () => {
@@ -17,20 +16,12 @@ describe("SafetyScorecard", () => {
     expect(screen.getByText("12,50")).toBeInTheDocument();
   });
 
-  it("displays the coefficient label", () => {
+  it("displays the coefficient label (always European)", () => {
     render(<SafetyScorecard {...defaultProps} />);
 
     expect(
       screen.getByText(/Standard Européen \(1,000,000\)/)
     ).toBeInTheDocument();
-  });
-
-  it("displays the OSHA coefficient when selected", () => {
-    render(
-      <SafetyScorecard {...defaultProps} coefficient="osha" />
-    );
-
-    expect(screen.getByText(/OSHA \(200,000\)/)).toBeInTheDocument();
   });
 
   it("displays the generation timestamp", () => {
@@ -43,7 +34,7 @@ describe("SafetyScorecard", () => {
   });
 
   it("formats numbers correctly with French locale", () => {
-    render(<SafetyScorecard tf={1234.567} tg={9876.543} coefficient="european" />);
+    render(<SafetyScorecard tf={1234.567} tg={9876.543} />);
 
     expect(screen.getByText("1 234,57")).toBeInTheDocument();
     expect(screen.getByText("9 876,54")).toBeInTheDocument();

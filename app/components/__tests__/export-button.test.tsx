@@ -45,7 +45,6 @@ describe("ExportButton", () => {
   const defaultProps = {
     tf: 5.25,
     tg: 12.5,
-    coefficient: "european" as const,
   };
 
   beforeEach(() => {
@@ -59,7 +58,7 @@ describe("ExportButton", () => {
   });
 
   it("disables export button when data is invalid", () => {
-    render(<ExportButton tf={null} tg={null} coefficient="european" />);
+    render(<ExportButton tf={null} tg={null} />);
 
     const button = screen.getByRole("button", { name: /exporter/i });
     expect(button).toBeDisabled();
