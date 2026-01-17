@@ -15,7 +15,7 @@ export interface CalculationResult {
 
 /**
  * Calcule le Taux de Fréquence (TF)
- * TF = (Nombre d'accidents × Coefficient) / Heures travaillées
+ * TF = (Nombre d'accidents avec arrêt / Heures travaillées) × 1 000 000
  */
 export function calculateTF(
   accidentsCount: number,
@@ -28,8 +28,9 @@ export function calculateTF(
     );
   }
 
-  const numerator = accidentsCount * coefficient;
-  const result = numerator / hoursWorked;
+  // TF utilise toujours 1 000 000 comme coefficient
+  const tfCoefficient = 1_000_000;
+  const result = (accidentsCount / hoursWorked) * tfCoefficient;
 
   // Vérification d'overflow
   if (!Number.isFinite(result)) {
@@ -41,7 +42,7 @@ export function calculateTF(
 
 /**
  * Calcule le Taux de Gravité (TG)
- * TG = (Jours perdus × Coefficient) / Heures travaillées
+ * TG = (Nombre de jours perdus / Heures travaillées) × 1 000
  */
 export function calculateTG(
   daysLost: number,
@@ -54,8 +55,9 @@ export function calculateTG(
     );
   }
 
-  const numerator = daysLost * coefficient;
-  const result = numerator / hoursWorked;
+  // TG utilise toujours 1 000 comme coefficient
+  const tgCoefficient = 1_000;
+  const result = (daysLost / hoursWorked) * tgCoefficient;
 
   // Vérification d'overflow
   if (!Number.isFinite(result)) {
